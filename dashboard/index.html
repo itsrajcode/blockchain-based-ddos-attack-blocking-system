@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DDoS Shield — Blockchain Security Dashboard</title>
+  <meta name="description" content="Real-time DDoS attack detection and prevention dashboard powered by blockchain-verified threat intelligence." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════ HEADER -->
+<header class="header" id="header">
+  <div class="header-left">
+    <div class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 2L28 8V16C28 22.627 22.627 28 16 28C9.373 28 4 22.627 4 16V8L16 2Z" fill="url(#shield-gradient)" opacity="0.9"/>
+          <path d="M16 8L21 12.5V16C21 18.761 18.761 21 16 21C13.239 21 11 18.761 11 16V12.5L16 8Z" fill="rgba(255,255,255,0.2)"/>
+          <circle cx="16" cy="16" r="3" fill="white" opacity="0.9"/>
+          <defs>
+            <linearGradient id="shield-gradient" x1="4" y1="2" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#00d4ff"/>
+              <stop offset="100%" stop-color="#7b2fff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-title">DDoS Shield</span>
+        <span class="logo-sub">Blockchain Security System</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="header-center">
+    <div class="system-status" id="systemStatus">
+      <div class="status-pulse" id="statusPulse"></div>
+      <span class="status-text" id="statusText">CONNECTING...</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="node-indicators">
+      <div class="node-indicator" id="nodeA">
+        <div class="node-dot"></div>
+        <span>Node A</span>
+      </div>
+      <div class="node-indicator" id="nodeB">
+        <div class="node-dot"></div>
+        <span>Node B</span>
+      </div>
+      <div class="node-indicator" id="nodeC">
+        <div class="node-dot"></div>
+        <span>Node C</span>
+      </div>
+    </div>
+    <div class="live-clock" id="liveClock"></div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════════════════════ MAIN -->
+<main class="main">
+
+  <!-- ── KPI CARDS ────────────────────────────────────────────── -->
+  <section class="kpi-row" aria-label="Key performance indicators">
+    <div class="kpi-card" id="kpi-total">
+      <div class="kpi-icon kpi-icon--blue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-value" id="kpiTotal">0</span>
+        <span class="kpi-label">Total Requests</span>
+      </div>
+      <div class="kpi-trend" id="kpiTotalTrend"></div>
+    </div>
+
+    <div class="kpi-card" id="kpi-normal">
+      <div class="kpi-icon kpi-icon--green">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-value" id="kpiNormal">0</span>
+        <span class="kpi-label">Normal Traffic</span>
+      </div>
+    </div>
+
+    <div class="kpi-card" id="kpi-suspicious">
+      <div class="kpi-icon kpi-icon--yellow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-value" id="kpiSuspicious">0</span>
+        <span class="kpi-label">Suspicious</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--danger" id="kpi-attacks">
+      <div class="kpi-icon kpi-icon--red">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-value" id="kpiAttacks">0</span>
+        <span class="kpi-label">Attacks Detected</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--warning" id="kpi-blocked">
+      <div class="kpi-icon kpi-icon--orange">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-value" id="kpiBlocked">0</span>
+        <span class="kpi-label">IPs Blocked</span>
+      </div>
+    </div>
+
+    <div class="kpi-card kpi-card--chain" id="kpi-chain">
+      <div class="kpi-icon kpi-icon--purple">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+      </div>
+      <div class="kpi-data">
+        <span class="kpi-value" id="kpiChain">0</span>
+        <span class="kpi-label">Blockchain Records</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CHARTS + ATTACK FEED ─────────────────────────────────── -->
+  <section class="content-row">
+
+    <!-- Live Traffic Chart -->
+    <div class="glass-card chart-card" aria-label="Live traffic chart">
+      <div class="card-header">
+        <h2 class="card-title">
+          <span class="card-title-icon">📡</span>
+          Live Traffic Monitor
+        </h2>
+        <div class="chart-legend">
+          <span class="legend-item"><span class="legend-dot legend-dot--normal"></span>Normal</span>
+          <span class="legend-item"><span class="legend-dot legend-dot--attack"></span>Attack</span>
+        </div>
+      </div>
+      <div class="chart-wrapper">
+        <canvas id="trafficChart" aria-label="Real-time packets per second chart" role="img"></canvas>
+      </div>
+    </div>
+
+    <!-- Attack Feed -->
+    <div class="glass-card feed-card" aria-label="Live attack feed">
+      <div class="card-header">
+        <h2 class="card-title">
+          <span class="card-title-icon">⚡</span>
+          Attack Feed
+        </h2>
+        <span class="badge badge--live">LIVE</span>
+      </div>
+      <div class="attack-feed" id="attackFeed" role="log" aria-live="polite" aria-label="Real-time attack events">
+        <div class="feed-empty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          <span>No attacks detected — system protected</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── BLOCKCHAIN + BLOCKED IPs ─────────────────────────────── -->
+  <section class="content-row content-row--bottom">
+
+    <!-- Blockchain Ledger -->
+    <div class="glass-card blockchain-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <span class="card-title-icon">🔗</span>
+          Blockchain Ledger
+        </h2>
+        <button class="btn btn--outline btn--sm" id="verifyChainBtn" aria-label="Verify blockchain integrity">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          Verify Chain
+        </button>
+      </div>
+      <div class="chain-integrity" id="chainIntegrity" aria-live="polite"></div>
+      <div class="blockchain-list" id="blockchainList">
+        <div class="chain-empty">
+          <span>Genesis block initialised — awaiting attack records</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blocked IPs -->
+    <div class="glass-card blocked-card">
+      <div class="card-header">
+        <h2 class="card-title">
+          <span class="card-title-icon">🚫</span>
+          Blocked IPs
+        </h2>
+        <span class="blocked-count-badge" id="blockedCountBadge">0 active</span>
+      </div>
+      <div class="blocked-list" id="blockedList">
+        <div class="chain-empty">
+          <span>No IPs currently blocked</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── SIMULATION CONTROLS ──────────────────────────────────── -->
+  <section class="control-panel glass-card" aria-label="Traffic simulation controls">
+    <div class="card-header">
+      <h2 class="card-title">
+        <span class="card-title-icon">🎮</span>
+        Simulation Controls
+      </h2>
+      <div class="sim-status" id="simStatus">Idle</div>
+    </div>
+    <div class="controls-row">
+      <div class="control-group">
+        <label for="attackTypeSelect" class="control-label">Attack Type</label>
+        <select id="attackTypeSelect" class="control-select">
+          <option value="http_flood">HTTP Flood</option>
+          <option value="syn_flood">SYN Flood</option>
+          <option value="udp_flood">UDP Flood</option>
+        </select>
+      </div>
+      <div class="control-group">
+        <label for="durationInput" class="control-label">Duration (seconds)</label>
+        <input type="number" id="durationInput" class="control-input" value="30" min="5" max="300" />
+      </div>
+      <div class="btn-group">
+        <button class="btn btn--success" id="btnNormal" aria-label="Start normal traffic simulation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Normal Traffic
+        </button>
+        <button class="btn btn--danger" id="btnAttack" aria-label="Launch simulated DDoS attack">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Launch Attack
+        </button>
+        <button class="btn btn--warning" id="btnMixed" aria-label="Start mixed traffic simulation">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Mixed Mode
+        </button>
+        <button class="btn btn--outline" id="btnRefresh" aria-label="Refresh dashboard data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          Refresh
+        </button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ════════════════════════════════════════════════════════ TOAST -->
+<div class="toast-container" id="toastContainer" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- ════════════════════════════════════════════════════════ ATTACK MODAL -->
+<div class="modal-overlay" id="attackModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-alarm">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+      </div>
+      <h3 id="modalTitle">🚨 DDoS Attack Detected</h3>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn--outline" id="modalClose">Dismiss</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
