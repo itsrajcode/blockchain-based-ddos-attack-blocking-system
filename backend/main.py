@@ -274,7 +274,7 @@ async def _run_pipeline(src_ip: str, packet: TrafficPacket) -> dict:
 
 @app.get("/")
 async def root():
-    return {"status": "DDoS Detection System running", "version": "1.0.0"}
+    return {"status": "DDoS Detection System Backend is running", "version": "1.0.0"}
 
 
 @app.post("/api/traffic")
